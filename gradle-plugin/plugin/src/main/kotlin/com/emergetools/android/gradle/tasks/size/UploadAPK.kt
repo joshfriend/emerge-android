@@ -68,10 +68,11 @@ abstract class UploadAPK : BaseUploadTask() {
       )
 
     upload(artifactMetadata) { response ->
+      val url = "https://emergetools.com/build/${response.uploadId}"
       logger.lifecycle("APK Upload successful! View Emerge's size analysis at the following url:")
-      logger.lifecycle("https://emergetools.com/build/${response.uploadId}")
+      logger.lifecycle(url)
       logger.lifecycle("Size processing can take up to 10 minutes.")
-      buildScan.get().link("Emerge Tools Size Report", "https://emergetools.com/build/${response.uploadId}")
+      addBuildScanLink("Emerge Tools Size Report", url)
     }
   }
 

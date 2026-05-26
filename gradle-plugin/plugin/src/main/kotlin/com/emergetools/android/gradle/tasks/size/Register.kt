@@ -4,7 +4,7 @@ import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.Variant
 import com.emergetools.android.gradle.EmergePlugin.Companion.EMERGE_TASK_PREFIX
 import com.emergetools.android.gradle.EmergePluginExtension
-import com.emergetools.android.gradle.dv.getBuildScan
+import com.emergetools.android.gradle.dv.registerEmergeBuildScanLinksService
 import com.emergetools.android.gradle.tasks.base.BasePreflightTask.Companion.setPreflightTaskInputs
 import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setTagFromProductOptions
 import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setUploadTaskInputs
@@ -51,6 +51,7 @@ private fun registerUploadAPKTask(
   variant: Variant,
 ) {
   val taskName = "${EMERGE_TASK_PREFIX}Upload${variant.name.capitalize()}Apk"
+  val buildScanLinks = appProject.gradle.registerEmergeBuildScanLinksService()
 
   appProject.tasks.register(taskName, UploadAPK::class.java) {
     it.group = EMERGE_SIZE_TASK_GROUP
@@ -59,7 +60,8 @@ private fun registerUploadAPKTask(
     it.proguardMapping.set(variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE))
     it.setUploadTaskInputs(extension, appProject, variant)
     it.setTagFromProductOptions(extension.sizeOptions, variant)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScanLinks.set(buildScanLinks)
+    it.usesService(buildScanLinks)
   }
 }
 
@@ -69,6 +71,7 @@ private fun registerUploadAABTask(
   variant: Variant,
 ) {
   val taskName = getUploadAabTaskName(variant.name)
+  val buildScanLinks = appProject.gradle.registerEmergeBuildScanLinksService()
 
   appProject.tasks.register(taskName, UploadAAB::class.java) {
     it.group = EMERGE_SIZE_TASK_GROUP
@@ -76,7 +79,8 @@ private fun registerUploadAABTask(
     it.artifact.set(variant.artifacts.get(SingleArtifact.BUNDLE))
     it.setUploadTaskInputs(extension, appProject, variant)
     it.setTagFromProductOptions(extension.sizeOptions, variant)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScanLinks.set(buildScanLinks)
+    it.usesService(buildScanLinks)
   }
 }
 

@@ -5,6 +5,7 @@ import com.emergetools.android.gradle.BuildConfig
 import com.emergetools.android.gradle.EmergePlugin
 import com.emergetools.android.gradle.EmergePluginExtension
 import com.emergetools.android.gradle.ProductOptions
+import com.emergetools.android.gradle.dv.EmergeBuildScanLinksService
 import com.emergetools.android.gradle.util.AgpVersions
 import com.emergetools.android.gradle.util.dependencies.ARTIFACT_ASSETS
 import com.emergetools.android.gradle.util.dependencies.ARTIFACT_CLASSES
@@ -17,7 +18,6 @@ import com.emergetools.android.gradle.util.network.EmergeUploadResponse
 import com.emergetools.android.gradle.util.network.SOURCE_GRADLE_PLUGIN
 import com.emergetools.android.gradle.util.network.fetchSignedUrl
 import com.emergetools.android.gradle.util.network.postFile
-import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -139,7 +139,11 @@ abstract class BaseUploadTask : DefaultTask() {
   abstract val appModulePath: Property<String>
 
   @get:Internal
-  abstract val buildScan: Property<BuildScanAdapter>
+  abstract val buildScanLinks: Property<EmergeBuildScanLinksService>
+
+  protected fun addBuildScanLink(label: String, url: String) {
+    buildScanLinks.orNull?.link(label, url)
+  }
 
   private lateinit var artifacts: List<ArtifactCollection>
 

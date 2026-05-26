@@ -57,7 +57,7 @@ abstract class InitializeReaper : BaseUploadTask() {
       logger.lifecycle("Reaper initialized! View Reaper reports for this version at the following url:")
       logger.lifecycle(url)
       logger.lifecycle("Note: Initial Reaper processing can take up to 10 minutes.")
-      buildScan.get().link("Emerge Tools Reaper Report", url)
+      addBuildScanLink("Emerge Tools Reaper Report", url)
     }
   }
 

@@ -44,7 +44,7 @@ abstract class UploadAAB : BaseUploadTask() {
       logger.lifecycle("AAB Upload successful! View Emerge's size analysis at the following url:")
       logger.lifecycle(url)
       logger.lifecycle("Size processing can take up to 10 minutes.")
-      buildScan.get().link("Emerge Tools Size Report", url)
+      addBuildScanLink("Emerge Tools Size Report", url)
     }
   }
 

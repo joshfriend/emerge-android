@@ -75,7 +75,7 @@ abstract class UploadPerfBundle : BaseUploadTask() {
       )
       logger.lifecycle(url)
       logger.lifecycle("Performance testing usually takes around 30 minutes or less.")
-      buildScan.get().link("Emerge Tools Performance", url)
+      addBuildScanLink("Emerge Tools Performance", url)
     }
   }
 }

@@ -131,6 +131,14 @@ gradlePlugin {
       implementationClass = "com.emergetools.android.gradle.EmergePlugin"
       tags = listOf("emerge", "emergetools", "android", "upload")
     }
+    register("com.emergetools.android.settings") {
+      id = "com.emergetools.android.settings"
+      displayName = "Emerge Gradle Settings Plugin"
+      description = "Settings-level companion plugin that wires Emerge upload links into " +
+        "the active Develocity Build Scan. Apply to settings when using Isolated Projects."
+      implementationClass = "com.emergetools.android.gradle.EmergeSettingsPlugin"
+      tags = listOf("emerge", "emergetools", "android", "develocity")
+    }
   }
 }
 

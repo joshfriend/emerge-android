@@ -7,7 +7,7 @@ import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.emergetools.android.gradle.EmergePlugin.Companion.EMERGE_TASK_PREFIX
 import com.emergetools.android.gradle.EmergePluginExtension
-import com.emergetools.android.gradle.dv.getBuildScan
+import com.emergetools.android.gradle.dv.registerEmergeBuildScanLinksService
 import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setTagFromProductOptions
 import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setUploadTaskInputs
 import com.emergetools.android.gradle.util.capitalize
@@ -49,6 +49,7 @@ private fun registerUploadPerfBundleTask(
   extension: EmergePluginExtension,
 ) {
   val taskName = "${EMERGE_TASK_PREFIX}Upload${appVariant.name.capitalize()}PerfBundle"
+  val buildScanLinks = appProject.gradle.registerEmergeBuildScanLinksService()
   appProject.tasks.register(taskName, UploadPerfBundle::class.java) {
     it.group = EMERGE_PERFORMANCE_TASK_GROUP
     it.description = "Builds & uploads an AAB for variant ${appVariant.name} to " +
@@ -57,7 +58,8 @@ private fun registerUploadPerfBundleTask(
     it.perfArtifactDir.set(performanceVariant.artifacts.get(SingleArtifact.APK))
     it.setUploadTaskInputs(extension, appProject, appVariant)
     it.setTagFromProductOptions(extension.perfOptions, appVariant)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScanLinks.set(buildScanLinks)
+    it.usesService(buildScanLinks)
   }
 }
 

@@ -8,7 +8,7 @@ import com.android.build.api.variant.ScopedArtifacts
 import com.emergetools.android.gradle.EmergePlugin.Companion.BUILD_OUTPUT_DIR_NAME
 import com.emergetools.android.gradle.EmergePlugin.Companion.EMERGE_TASK_PREFIX
 import com.emergetools.android.gradle.EmergePluginExtension
-import com.emergetools.android.gradle.dv.getBuildScan
+import com.emergetools.android.gradle.dv.registerEmergeBuildScanLinksService
 import com.emergetools.android.gradle.tasks.base.ArtifactMetadata
 import com.emergetools.android.gradle.tasks.base.BasePreflightTask.Companion.setPreflightTaskInputs
 import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setTagFromProductOptions
@@ -159,6 +159,7 @@ private fun registerSnapshotUploadTask(
   variant: ApplicationVariant,
   packageTask: TaskProvider<PackageSnapshotArtifacts>,
 ) {
+  val buildScanLinks = appProject.gradle.registerEmergeBuildScanLinksService()
   appProject.tasks.register(
     getSnapshotUploadTaskName(variant.name),
     UploadSnapshotBundle::class.java,
@@ -176,7 +177,8 @@ private fun registerSnapshotUploadTask(
     it.setUploadTaskInputs(extension, appProject, variant)
     it.setTagFromProductOptions(extension.snapshotOptions, variant)
     it.dependsOn(packageTask)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScanLinks.set(buildScanLinks)
+    it.usesService(buildScanLinks)
   }
 }
 

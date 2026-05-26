@@ -109,7 +109,7 @@ abstract class UploadSnapshotBundle : BaseUploadTask() {
       )
       logger.lifecycle(url)
       logger.lifecycle("Snapshot generations usually take ~10 minutes or less.")
-      buildScan.get().link("Emerge Tools Snapshots", url)
+      addBuildScanLink("Emerge Tools Snapshots", url)
     }
   }
 }
