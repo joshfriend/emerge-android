@@ -80,7 +80,7 @@ dependencies {
   implementation(libs.asm)
   implementation(libs.asm.commons)
 
-  add(shadowedDependencies.name, libs.develocity.agent.adapters)
+  compileOnly(libs.develocity.gradle.plugin)
   add(shadowedDependencies.name, libs.kotlinx.datetime)
   add(shadowedDependencies.name, libs.kotlinx.serialization)
   add(shadowedDependencies.name, libs.okhttp)

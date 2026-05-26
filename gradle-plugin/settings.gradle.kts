@@ -10,6 +10,7 @@ dependencyResolutionManagement {
   repositories {
     google()
     mavenCentral()
+    gradlePluginPortal()
   }
 
   // TODO(chromy): Is this correct?
