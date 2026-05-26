@@ -10,9 +10,14 @@ import com.gradle.develocity.agent.gradle.adapters.develocity.DevelocityConfigur
 import com.gradle.develocity.agent.gradle.adapters.enterprise.GradleEnterpriseExtensionAdapter
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.caching.configuration.AbstractBuildCache
 
-private fun Project.createDevelocityAdapter(): DevelocityAdapter {
+private fun Project.createDevelocityAdapter(buildFeatures: BuildFeatures): DevelocityAdapter {
+  if (buildFeatures.isolatedProjects.active.getOrElse(false)) {
+    return NoOpDevelocityAdapter()
+  }
+
   rootProject.extensions.findByName("develocity")?.let {
     return DevelocityConfigurationAdapter(it)
   }
@@ -23,8 +28,8 @@ private fun Project.createDevelocityAdapter(): DevelocityAdapter {
   return NoOpDevelocityAdapter()
 }
 
-fun Project.getBuildScan(): BuildScanAdapter {
-  return createDevelocityAdapter().buildScan
+fun Project.getBuildScan(buildFeatures: BuildFeatures): BuildScanAdapter {
+  return createDevelocityAdapter(buildFeatures).buildScan
 }
 
 // This no-op class is used if the DV plugin is not applied

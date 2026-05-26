@@ -21,6 +21,7 @@ import com.emergetools.android.gradle.util.hasDependency
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.tasks.TaskProvider
 
 const val EMERGE_SNAPSHOTS_TASK_GROUP = "Emerge snapshots"
@@ -32,6 +33,7 @@ fun registerSnapshotTasks(
   extension: EmergePluginExtension,
   variant: ApplicationVariant,
   androidTest: AndroidTest,
+  buildFeatures: BuildFeatures,
 ) {
   appProject.logger.debug(
     "Registering snapshot tasks for variant ${variant.name} in project ${appProject.path}",
@@ -43,7 +45,7 @@ fun registerSnapshotTasks(
 
   val snapshotPackageTask = registerSnapshotPackageTask(appProject, variant, androidTest)
   registerSnapshotLocalTask(appProject, extension, variant, androidTest, snapshotPackageTask)
-  registerSnapshotUploadTask(appProject, extension, variant, snapshotPackageTask)
+  registerSnapshotUploadTask(appProject, extension, variant, snapshotPackageTask, buildFeatures)
 }
 
 private fun registerSnapshotPackageTask(
@@ -158,6 +160,7 @@ private fun registerSnapshotUploadTask(
   extension: EmergePluginExtension,
   variant: ApplicationVariant,
   packageTask: TaskProvider<PackageSnapshotArtifacts>,
+  buildFeatures: BuildFeatures,
 ) {
   appProject.tasks.register(
     getSnapshotUploadTaskName(variant.name),
@@ -176,7 +179,7 @@ private fun registerSnapshotUploadTask(
     it.setUploadTaskInputs(extension, appProject, variant)
     it.setTagFromProductOptions(extension.snapshotOptions, variant)
     it.dependsOn(packageTask)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScan.set(appProject.getBuildScan(buildFeatures))
   }
 }
 

@@ -18,9 +18,13 @@ import com.emergetools.android.gradle.tasks.snapshots.registerSnapshotTasks
 import com.emergetools.android.gradle.util.AgpVersions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.tasks.StopExecutionException
+import javax.inject.Inject
 
-class EmergePlugin : Plugin<Project> {
+class EmergePlugin @Inject constructor(
+  private val buildFeatures: BuildFeatures,
+) : Plugin<Project> {
   // Temporary storage for app variants, used to configure perf tasks
   private val appVariants = mutableListOf<ApplicationVariant>()
 
@@ -93,12 +97,12 @@ class EmergePlugin : Plugin<Project> {
         appVariants.add(variant)
 
         if (emergeExtension.sizeOptions.enabled.getOrElse(true)) {
-          registerSizeTasks(appProject, emergeExtension, variant)
+          registerSizeTasks(appProject, emergeExtension, variant, buildFeatures)
         }
 
         // Always register the Reaper initialization task even if Reaper is disabled since users use
         // it to help get Reaper setup for the first time.
-        registerReaperTasks(appProject, emergeExtension, variant)
+        registerReaperTasks(appProject, emergeExtension, variant, buildFeatures)
 
         registerReaperTransform(
           project = appProject,
@@ -112,7 +116,7 @@ class EmergePlugin : Plugin<Project> {
             ?: return@onVariants
 
         if (emergeExtension.snapshotOptions.enabled.getOrElse(true)) {
-          registerSnapshotTasks(appProject, emergeExtension, variant, androidTest)
+          registerSnapshotTasks(appProject, emergeExtension, variant, androidTest, buildFeatures)
         }
       }
     }
@@ -157,6 +161,7 @@ class EmergePlugin : Plugin<Project> {
           emergeExtension,
           perfVariant,
           appVariants,
+          buildFeatures,
         )
       }
     }

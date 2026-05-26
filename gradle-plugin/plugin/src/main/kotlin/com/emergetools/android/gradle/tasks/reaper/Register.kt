@@ -10,6 +10,7 @@ import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setUpl
 import com.emergetools.android.gradle.util.capitalize
 import com.emergetools.android.gradle.util.hasDependency
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
 
 const val EMERGE_REAPER_TASK_GROUP = "Emerge reaper"
 const val REAPER_DEP_GROUP = "com.emergetools.reaper"
@@ -19,6 +20,7 @@ fun registerReaperTasks(
   appProject: Project,
   extension: EmergePluginExtension,
   variant: Variant,
+  buildFeatures: BuildFeatures,
 ) {
   appProject.logger.debug(
     "Registering reaper tasks for variant ${variant.name} in project ${appProject.path}",
@@ -30,7 +32,7 @@ fun registerReaperTasks(
   // Only register upload task if Reaper is enabled for variant
   if (enabledVariants.contains(variant.name)) {
     appProject.logger.debug("Reaper enabled for variant ${variant.name}")
-    registerReaperUploadTask(appProject, extension, variant)
+    registerReaperUploadTask(appProject, extension, variant, buildFeatures)
   }
 }
 
@@ -57,6 +59,7 @@ private fun registerReaperUploadTask(
   appProject: Project,
   extension: EmergePluginExtension,
   variant: Variant,
+  buildFeatures: BuildFeatures,
 ) {
   val uploadReaperAabTaskName = "${EMERGE_TASK_PREFIX}UploadReaperAab${variant.name.capitalize()}"
   val uploadReaperAabTask =
@@ -65,7 +68,7 @@ private fun registerReaperUploadTask(
       it.publishableApiKey.set(extension.reaperOptions.publishableApiKey)
       it.setUploadTaskInputs(extension, appProject, variant)
       it.setTagFromProductOptions(extension.reaperOptions, variant)
-      it.buildScan.set(appProject.getBuildScan())
+      it.buildScan.set(appProject.getBuildScan(buildFeatures))
     }
   // Hook the bundle tasks to run the reaper upload task after they complete.
   appProject.afterEvaluate { project ->

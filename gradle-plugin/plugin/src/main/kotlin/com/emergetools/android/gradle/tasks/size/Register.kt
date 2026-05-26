@@ -10,6 +10,7 @@ import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setTag
 import com.emergetools.android.gradle.tasks.base.BaseUploadTask.Companion.setUploadTaskInputs
 import com.emergetools.android.gradle.util.capitalize
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
 
 const val EMERGE_SIZE_TASK_GROUP = "Emerge size analysis"
 
@@ -17,6 +18,7 @@ fun registerSizeTasks(
   appProject: Project,
   extension: EmergePluginExtension,
   variant: Variant,
+  buildFeatures: BuildFeatures,
 ) {
   appProject.logger.debug(
     "Registering size tasks for variant ${variant.name} in project ${appProject.path}",
@@ -24,8 +26,8 @@ fun registerSizeTasks(
 
   registerSizeAnalysisPreflightTask(appProject, extension, variant)
 
-  registerUploadAPKTask(appProject, extension, variant)
-  registerUploadAABTask(appProject, extension, variant)
+  registerUploadAPKTask(appProject, extension, variant, buildFeatures)
+  registerUploadAABTask(appProject, extension, variant, buildFeatures)
 }
 
 private fun registerSizeAnalysisPreflightTask(
@@ -49,6 +51,7 @@ private fun registerUploadAPKTask(
   appProject: Project,
   extension: EmergePluginExtension,
   variant: Variant,
+  buildFeatures: BuildFeatures,
 ) {
   val taskName = "${EMERGE_TASK_PREFIX}Upload${variant.name.capitalize()}Apk"
 
@@ -59,7 +62,7 @@ private fun registerUploadAPKTask(
     it.proguardMapping.set(variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE))
     it.setUploadTaskInputs(extension, appProject, variant)
     it.setTagFromProductOptions(extension.sizeOptions, variant)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScan.set(appProject.getBuildScan(buildFeatures))
   }
 }
 
@@ -67,6 +70,7 @@ private fun registerUploadAABTask(
   appProject: Project,
   extension: EmergePluginExtension,
   variant: Variant,
+  buildFeatures: BuildFeatures,
 ) {
   val taskName = getUploadAabTaskName(variant.name)
 
@@ -76,7 +80,7 @@ private fun registerUploadAABTask(
     it.artifact.set(variant.artifacts.get(SingleArtifact.BUNDLE))
     it.setUploadTaskInputs(extension, appProject, variant)
     it.setTagFromProductOptions(extension.sizeOptions, variant)
-    it.buildScan.set(appProject.getBuildScan())
+    it.buildScan.set(appProject.getBuildScan(buildFeatures))
   }
 }
 
